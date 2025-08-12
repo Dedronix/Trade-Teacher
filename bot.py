@@ -1,22 +1,34 @@
 import asyncio
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 TOKEN = '8203536729:AAFjilpb7lvqS6P6_ltoN73-XQpgvcjzLXQ'
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
-USER_ID = None  # сюда вставь свой Telegram user_id после первого запуска
+USER_ID_FILE = 'user_id.txt'
 
-# Клавиатура с кнопками
+# Функции для сохранения и загрузки user_id
+def save_user_id(user_id):
+    with open(USER_ID_FILE, 'w') as f:
+        f.write(str(user_id))
+
+def load_user_id():
+    try:
+        with open(USER_ID_FILE, 'r') as f:
+            return int(f.read())
+    except:
+        return None
+
+USER_ID = load_user_id()
+
 keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 keyboard.add(KeyboardButton('📖 Теория'))
 keyboard.add(KeyboardButton('📊 Пример'))
 keyboard.add(KeyboardButton('✅ Отправить результат'))
 
-# Флаг для проверки, ответил ли пользователь сегодня
 user_responded = False
 
 async def send_task():
@@ -43,8 +55,7 @@ async def remind_loop():
         await asyncio.sleep(wait_seconds)
         await send_task()
 
-        # После отправки задания, проверяем ответ каждые 30 мин, пока не ответит
-        for _ in range(48):  # Проверять в течение 24 часов (48*30 мин)
+        for _ in range(48):  # Проверять в течение 24 часов (каждые 30 мин)
             if user_responded:
                 break
             await asyncio.sleep(1800)  # 30 минут
@@ -55,6 +66,7 @@ async def remind_loop():
 async def cmd_start(message: types.Message):
     global USER_ID
     USER_ID = message.from_user.id
+    save_user_id(USER_ID)
     await message.answer("Бро, бот запущен и готов тебя долбить по крипте. Жди в 20:00 первое задание!", reply_markup=keyboard)
 
 @dp.message_handler(lambda message: message.text == '📖 Теория')
