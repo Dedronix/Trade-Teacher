@@ -28,3 +28,5 @@ for name, url in images.items():
         print(f"{name} - ошибка: {e}")
 
 print("✅ Все картинки обработаны")
+if __name__ == "__main__":
+    main()
