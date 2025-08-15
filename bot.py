@@ -1,3 +1,4 @@
+print("=== BOT.PY ЗАПУСТИЛСЯ ===")
 import asyncio
 import json
 import os
