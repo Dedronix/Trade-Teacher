@@ -1,3 +1,11 @@
+from flask import Flask
+
+# Добавь в начало файла
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Трейд-бот работает! 🔥"
 import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -206,4 +214,9 @@ def main():
     application.run_polling()
 
 if __name__ == "__main__":
+    main()
+if __name__ == "__main__":
+    # Для локального запуска
+    from threading import Thread
+    Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 5000}).start()
     main()
